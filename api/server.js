@@ -27,13 +27,13 @@ const checkJwt = auth({
 });
 
 app.post('/api/suggest-cocktails', checkJwt, limiter, async (req, res) => {
-  const { flavorProfile, abv, strength, baseSpirit } = req.body;
+  const { flavorProfile, strength, baseSpirit, bubbles } = req.body;
   
   const prompt = `As a professional mixologist, suggest 5 cocktails with these preferences:
-  - Flavor profile: ${flavorProfile}
-  - ABV range: ${abv}
+  - Flavor profile: ${flavorProfile.join(', ')}
   - Strength preference: ${strength}
   - Base spirit: ${baseSpirit}
+  - Bubbles preference: ${bubbles === 'yes' ? 'with bubbles' : 'without bubbles'}
   
   Return the suggestions in this exact JSON format:
   {
@@ -52,6 +52,7 @@ app.post('/api/suggest-cocktails', checkJwt, limiter, async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
+    console.log('Gemini API Response:', response.text());
     const jsonResponse = JSON.parse(response.text());
     res.json(jsonResponse);
   } catch (error) {
@@ -68,5 +69,5 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
