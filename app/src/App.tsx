@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
 
 function App() {
   const { loginWithRedirect, isAuthenticated, user, logout, getAccessTokenSilently } = useAuth0();
