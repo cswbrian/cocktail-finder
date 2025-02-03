@@ -42,10 +42,34 @@ app.post('/api/suggest-cocktails',
     "suggestions": [
       {
         "name": "Cocktail Name",
-        "baseSpirit": "Main spirit",
-        "otherIngredients": ["ingredient1", "ingredient2"],
-        "potentialAllergens": ["allergen1", "allergen2"],
-        "reason": "Why this cocktail matches the preferences"
+        "baseSpirits": [
+          {
+            "name": "spirit name",
+            "amount": 30,
+            "unit": "ml"
+          }
+        ],
+        "liqueurs": [
+          {
+            "name": "liqueur name",
+            "amount": 15,
+            "unit": "ml"
+          }
+        ],
+        "ingredients": [
+          {
+            "name": "ingredient name",
+            "amount": 30,
+            "unit": "ml"
+          }
+        ],
+        "garnish": "garnish description",
+        "reason": "Why this cocktail matches the preferences",
+        "relevanceScore": 0.95,
+        "sources": [
+          "https://www.example.com/cocktail1",
+          "https://www.example.com/cocktail2"
+        ]
       }
     ]
   }`;

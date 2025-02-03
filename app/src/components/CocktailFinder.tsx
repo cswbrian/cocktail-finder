@@ -116,19 +116,11 @@ export default function CocktailFinder() {
   return (
     <div>
       <div className="relative container mx-auto p-4">
-        {loading && (
-          <div className="bg-opacity-50 absolute inset-0 z-10 flex items-center justify-center bg-black">
-            <div className="text-2xl text-white">
-              Our AI mixologist is carefully crafting your cocktail
-              suggestions...
-            </div>
-          </div>
-        )}
         <h1 className="mt-8 text-4xl">Cocktail Finder</h1>
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-y-4">
           <div>
             <label className="font-semibold">Flavor Profile</label>
-            <div className="flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {flavorOptions.map((flavor) => (
                 <button
                   className={cn(
@@ -212,13 +204,33 @@ export default function CocktailFinder() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full border border-white px-4 py-2 text-white"
+            className={cn(
+              "rounded-full border border-white px-4 py-2 text-white",
+              loading && "cursor-not-allowed bg-white text-black",
+            )}
           >
-            {loading ? "Getting Suggestions..." : "Get Suggestions"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="mr-3 size-5 animate-spin text-black"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Mixing for you...
+              </span>
+            ) : (
+              "Get Suggestions"
+            )}
           </button>
         </form>
 
-        {error && <div>{error}</div>}
+        {error && <div className="mt-2 text-red-500">{error}</div>}
 
         <div className="mt-8 flex flex-col gap-y-6">
           {suggestions.map((cocktail, index) => (
