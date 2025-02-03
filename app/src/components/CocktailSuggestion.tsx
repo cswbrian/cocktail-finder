@@ -29,9 +29,9 @@ export default function CocktailSuggestion({
       <div>
         <ul className="mt-1">
           {[
-            ...(cocktail.baseSpirits.length > 0 ? cocktail.baseSpirits : []),
-            ...(cocktail.liqueurs.length > 0 ? cocktail.liqueurs : []),
-            ...(cocktail.ingredients.length > 0 ? cocktail.ingredients : []),
+            ...(cocktail.baseSpirits?.length > 0 ? cocktail.baseSpirits : []),
+            ...(cocktail.liqueurs?.length > 0 ? cocktail.liqueurs : []),
+            ...(cocktail.ingredients?.length > 0 ? cocktail.ingredients : []),
           ].map((item, index) => (
             <li key={index} className="flex justify-between">
               {item.name}
