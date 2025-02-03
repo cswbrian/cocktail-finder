@@ -12,8 +12,11 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
     "@tailwindcss/vite": "^4.0.3",
+    "clsx": "^2.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.5",
+    "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -26,6 +29,8 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.0.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",

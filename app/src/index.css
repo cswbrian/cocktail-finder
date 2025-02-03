@@ -1,4 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
+
+/* Optional: Set the font family globally */
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
 /* 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

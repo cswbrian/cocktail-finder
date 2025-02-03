@@ -26,14 +26,16 @@ const checkJwt = auth({
   tokenSigningAlg: 'RS256'
 });
 
-app.post('/api/suggest-cocktails', checkJwt, limiter, async (req, res) => {
-  const { flavorProfile, strength, baseSpirit, bubbles } = req.body;
+app.post('/api/suggest-cocktails', 
+  // checkJwt, 
+  limiter, async (req, res) => {
+  const { flavorProfile, strength, baseSpirit, sparkling } = req.body;
   
   const prompt = `As a professional mixologist, suggest 5 cocktails with these preferences:
   - Flavor profile: ${flavorProfile.join(', ')}
   - Strength preference: ${strength}
   - Base spirit: ${baseSpirit}
-  - Bubbles preference: ${bubbles === 'yes' ? 'with bubbles' : 'without bubbles'}
+  - Sparkling preference: ${sparkling === 'yes' ? 'with sparkling' : 'without sparkling'}
   
   Return the suggestions in this exact JSON format:
   {
