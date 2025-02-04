@@ -108,7 +108,7 @@ export default function CocktailFinder() {
   return (
     <div>
       <div className="relative container mx-auto p-4">
-        <h1 className="mt-8 text-4xl">Cocktail Finder</h1>
+        <h1 className="mt-8 text-4xl">AI Cocktail Finder</h1>
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-y-4">
           <div>
             <label className="font-semibold">
@@ -242,6 +242,13 @@ export default function CocktailFinder() {
         </form>
 
         {error && <div className="mt-2 text-red-400">{error}</div>}
+
+        {suggestions.length > 0 && (
+          <div className="mt-4 text-sm text-gray-400">
+            Heads up: Our AI bartender might be a little tipsy - results may
+            vary! 🍹
+          </div>
+        )}
 
         <div className="mt-8 flex flex-col gap-y-6">
           {suggestions.map((cocktail, index) => (

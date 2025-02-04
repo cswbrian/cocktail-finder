@@ -227,10 +227,10 @@ export default function FlavorChart({
         .style("font-size", "0.8em");
     });
 
-    // Zone lines
+    // Zone lines - keep these
     zoneValues.forEach((value) => {
-      if (value !== 0) {
-        // Skip center line
+      // Skip center line and edge lines (x = -1 and x = 1)
+      if (value !== 0 && value !== -1 && value !== 1) {
         chart
           .append("line")
           .attr("x1", xScale(value))
@@ -243,8 +243,8 @@ export default function FlavorChart({
     });
 
     zoneValues.forEach((value) => {
-      if (value !== 0) {
-        // Skip center line
+      // Skip center line and edge lines (y = -1 and y = 1)
+      if (value !== 0 && value !== -1 && value !== 1) {
         chart
           .append("line")
           .attr("x1", 0)
@@ -297,7 +297,22 @@ export default function FlavorChart({
       .style("stop-color", "#dc2626") // Brighter red
       .style("stop-opacity", 0.5); // Increased opacity
 
-    // Add gradient background
+    // Add blur filter
+    const filter = chart
+      .append("defs")
+      .append("filter")
+      .attr("id", "chart-blur")
+      .attr("x", "-50%")
+      .attr("y", "-50%")
+      .attr("width", "200%")
+      .attr("height", "200%");
+
+    filter
+      .append("feGaussianBlur")
+      .attr("stdDeviation", 15)
+      .attr("edgeMode", "duplicate");
+
+    // Add gradient background with blur
     chart
       .append("rect")
       .attr("x", 0)
@@ -305,7 +320,8 @@ export default function FlavorChart({
       .attr("width", innerWidth)
       .attr("height", innerHeight)
       .style("fill", "url(#chart-gradient)")
-      .style("opacity", 0.5); // Increased opacity
+      .style("filter", "url(#chart-blur)")
+      .style("opacity", 0.5);
 
     // Add cocktail points and labels
     const cocktailGroup = chart
