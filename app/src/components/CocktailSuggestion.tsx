@@ -7,12 +7,16 @@ interface Ingredient {
 interface Cocktail {
   name: string;
   baseSpirits: Ingredient[];
-  liqueurs: Ingredient[];
   ingredients: Ingredient[];
+  technique: string;
   garnish: string;
-  reason: string;
-  relevanceScore: number;
-  sources?: string[];
+  flavor_profile: {
+    sweetness: number;
+    booziness: number;
+    balance_rating: number;
+  };
+  rationale: string;
+  source_links: string[];
 }
 
 interface CocktailSuggestionProps {
@@ -26,45 +30,59 @@ export default function CocktailSuggestion({
     <div className="flex flex-col gap-2 rounded-3xl bg-neutral-900 p-6">
       <h3 className="mb-4 text-2xl">{cocktail.name}</h3>
 
-      <div>
+      {/* Ingredients List */}
+      <div className="mt-4">
+        <h4 className="text-gray-400">Ingredients</h4>
         <ul className="mt-1">
-          {[
-            ...(cocktail.baseSpirits?.length > 0 ? cocktail.baseSpirits : []),
-            ...(cocktail.liqueurs?.length > 0 ? cocktail.liqueurs : []),
-            ...(cocktail.ingredients?.length > 0 ? cocktail.ingredients : []),
-          ].map((item, index) => (
-            <li key={index} className="flex justify-between">
-              {item.name}
-              <span className="text-gray-400">
-                {item.amount} {item.unit}
-              </span>
-            </li>
-          ))}
+          {[...cocktail.baseSpirits, ...cocktail.ingredients].map(
+            (item, index) => (
+              <li key={index} className="flex justify-between">
+                {item.name}
+                <span className="text-gray-400">
+                  {item.amount} {item.unit}
+                </span>
+              </li>
+            ),
+          )}
         </ul>
-        {cocktail.garnish && (
-          <div className="flex justify-between">
-            <div>{cocktail.garnish}</div>
-            <span className="text-gray-400">Garnish</span>
-          </div>
-        )}
       </div>
-      <p className="mt-4 text-gray-400">{cocktail.reason}</p>
-      {cocktail.sources && cocktail.sources.length > 0 && (
+
+      {/* Technique */}
+      {cocktail.technique && (
+        <div className="mt-4">
+          <h4 className="text-gray-400">Preparation</h4>
+          <p className="mt-1">{cocktail.technique}</p>
+        </div>
+      )}
+
+      {/* Garnish */}
+      {cocktail.garnish && (
+        <div className="mt-4">
+          <h4 className="text-gray-400">Garnish</h4>
+          <p className="mt-1">{cocktail.garnish}</p>
+        </div>
+      )}
+
+      {/* Rationale */}
+      <div className="mt-4">
+        <p className="mt-1 text-gray-400">{cocktail.rationale}</p>
+      </div>
+
+      {/* Source Links */}
+      {cocktail.source_links?.length > 0 && (
         <div className="mt-4 flex items-center gap-2">
-          <span className="text-sm text-gray-400">References</span>
-          <div className="flex gap-2">
-            {cocktail.sources.map((source, index) => (
-              <a
-                key={index}
-                href={source}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-4 w-4 items-center justify-center rounded-full border border-gray-400 text-xs text-gray-400"
-              >
-                {index + 1}
-              </a>
-            ))}
-          </div>
+          <span className="text-gray-400">References</span>
+          {cocktail.source_links.map((source, index) => (
+            <a
+              key={index}
+              href={source}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-4 w-4 items-center justify-center rounded-full border border-gray-400 text-xs text-gray-400"
+            >
+              {index + 1}
+            </a>
+          ))}
         </div>
       )}
     </div>

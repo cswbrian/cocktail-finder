@@ -5,7 +5,6 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "skipLibCheck": true,
-    "noEmitOnError": false
+    "noEmitOnError": true
   }
 }

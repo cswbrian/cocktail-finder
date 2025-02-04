@@ -1,72 +1,30 @@
 import { useState } from "react";
 import { cn } from "../utils";
 import CocktailSuggestion from "./CocktailSuggestion";
+import FlavorChart from "./FlavorChart";
+import { API_URL, flavorOptions, baseSpiritOptions } from "../lib/const";
 
-const API_URL =
-  import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
+interface Preferences {
+  flavorProfile: string[];
+  baseSpirits: (typeof baseSpiritOptions)[number][];
+  bubbles: string;
+  sweetness: number;
+  booziness: number;
+}
 
 export default function CocktailFinder() {
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<Preferences>({
     flavorProfile: [],
-    strength: [],
-    baseSpirit: "",
-    sparkling: "no",
+    baseSpirits: [],
+    bubbles: "no",
+    sweetness: 0,
+    booziness: 0,
   });
 
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const flavorOptions = [
-    {
-      name: "Sweet",
-      bg: "bg-pink-500",
-      border: "border-pink-500",
-      text: "text-black",
-    },
-    {
-      name: "Sour",
-      bg: "bg-green-500",
-      border: "border-green-500",
-      text: "text-black",
-    },
-    {
-      name: "Salty",
-      bg: "bg-sky-500",
-      border: "border-sky-500",
-      text: "text-black",
-    },
-    {
-      name: "Bitter",
-      bg: "bg-yellow-500",
-      border: "border-yellow-500",
-      text: "text-black",
-    },
-    {
-      name: "Fruity",
-      bg: "bg-amber-500",
-      border: "border-amber-500",
-      text: "text-black",
-    },
-    {
-      name: "Umami",
-      bg: "bg-emerald-500",
-      border: "border-emerald-500",
-      text: "text-black",
-    },
-    {
-      name: "Spicy",
-      bg: "bg-red-500",
-      border: "border-red-500",
-      text: "text-black",
-    },
-    {
-      name: "Herbal",
-      bg: "bg-lime-500",
-      border: "border-lime-500",
-      text: "text-black",
-    },
-  ];
+  const [showExamples, setShowExamples] = useState(false);
 
   const toggleFlavor = (flavor: string) => {
     setPreferences((prev) => ({
@@ -77,13 +35,36 @@ export default function CocktailFinder() {
     }));
   };
 
-  const handleStrengthChange = (strength: string) => {
+  const handleFlavorSelect = (
+    sweetness: number | null,
+    booziness: number | null,
+  ) => {
     setPreferences((prev) => ({
       ...prev,
-      strength: prev.strength.includes(strength)
-        ? prev.strength.filter((s) => s !== strength)
-        : [...prev.strength, strength],
+      sweetness: sweetness || 0,
+      booziness: booziness || 0,
     }));
+  };
+
+  const parsePartialJSON = (text: string) => {
+    try {
+      // First try parsing the complete JSON
+      return JSON.parse(text);
+    } catch (error) {
+      // If parsing fails, try to recover partial data
+      try {
+        // Look for the last complete suggestion object
+        const lastCompleteObject = text.lastIndexOf('},"suggestions":[');
+        if (lastCompleteObject > 0) {
+          const partialText = text.substring(0, lastCompleteObject + 1) + "}]}";
+          return JSON.parse(partialText);
+        }
+      } catch (innerError) {
+        // If partial parsing fails, return empty suggestions
+        return { suggestions: [] };
+      }
+      return { suggestions: [] };
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -104,7 +85,7 @@ export default function CocktailFinder() {
         throw new Error("Failed to get suggestions");
       }
 
-      const data = await response.json();
+      const data = parsePartialJSON(await response.text());
       setSuggestions(data.suggestions);
     } catch (err: any) {
       setError(err.message);
@@ -113,66 +94,96 @@ export default function CocktailFinder() {
     }
   };
 
+  const toggleBaseSpirit = (spirit: string) => {
+    setPreferences((prev) => ({
+      ...prev,
+      baseSpirits: prev.baseSpirits.includes(spirit)
+        ? prev.baseSpirits.filter((s) => s !== spirit)
+        : prev.baseSpirits.length < 3
+          ? [...prev.baseSpirits, spirit]
+          : prev.baseSpirits,
+    }));
+  };
+
   return (
     <div>
       <div className="relative container mx-auto p-4">
         <h1 className="mt-8 text-4xl">Cocktail Finder</h1>
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-y-4">
           <div>
-            <label className="font-semibold">Flavor Profile</label>
+            <label className="font-semibold">
+              Click on the chart to select your preference
+            </label>
+
+            <label className="mt-2 flex items-center gap-2 text-gray-400">
+              <input
+                type="checkbox"
+                checked={showExamples}
+                onChange={(e) => setShowExamples(e.target.checked)}
+              />
+              <span className="text-xs">Show example cocktails</span>
+            </label>
+
+            <FlavorChart
+              onSelect={handleFlavorSelect}
+              showExamples={showExamples}
+            />
+            <div>
+              <label className="font-semibold">Flavour Profile</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {flavorOptions.map((flavor) => (
+                  <button
+                    className={cn(
+                      "rounded-full border px-4 py-2",
+                      preferences.flavorProfile.includes(flavor.name)
+                        ? `${flavor.bg} ${flavor.border} ${flavor.text}`
+                        : `border-white text-white`,
+                    )}
+                    type="button"
+                    key={flavor.name}
+                    onClick={() => toggleFlavor(flavor.name)}
+                  >
+                    {flavor.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="font-semibold">Base Spirits (Select Max 3)</label>
             <div className="mt-2 flex flex-wrap gap-2">
-              {flavorOptions.map((flavor) => (
+              {baseSpiritOptions.map((spirit) => (
                 <button
                   className={cn(
                     "rounded-full border px-4 py-2",
-                    preferences.flavorProfile.includes(flavor.name)
-                      ? `${flavor.bg} ${flavor.border} ${flavor.text}`
-                      : `border-white text-white`,
+                    preferences.baseSpirits.includes(spirit)
+                      ? "border-white bg-white text-black"
+                      : "border-white text-white",
+                    preferences.baseSpirits.length >= 3 &&
+                      !preferences.baseSpirits.includes(spirit)
+                      ? "cursor-not-allowed opacity-50"
+                      : "",
                   )}
                   type="button"
-                  key={flavor.name}
-                  onClick={() => toggleFlavor(flavor.name)}
+                  key={spirit}
+                  onClick={() => toggleBaseSpirit(spirit)}
+                  disabled={
+                    preferences.baseSpirits.length >= 3 &&
+                    !preferences.baseSpirits.includes(spirit)
+                  }
                 >
-                  {flavor.name}
+                  {spirit}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <label className="font-semibold">Strength Preference</label>
-            <div className="flex flex-wrap gap-2">
-              {["Light", "Medium", "Strong"].map((strength) => (
-                <label key={strength}>
-                  <input
-                    type="checkbox"
-                    value={strength}
-                    checked={preferences.strength.includes(strength)}
-                    onChange={() => handleStrengthChange(strength)}
-                  />
-                  <span>{strength}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="font-semibold">Base Spirit</label>
-            <input
-              className="block w-full border-b border-white py-2"
-              type="text"
-              value={preferences.baseSpirit}
-              onChange={(e) =>
-                setPreferences({ ...preferences, baseSpirit: e.target.value })
-              }
-              placeholder="e.g., Vodka, Rum, Whiskey"
-            />
-          </div>
-          <div>
-            <label className="font-semibold">Sparkling Preference</label>
+            <label className="font-semibold">Bubbles</label>
             <div className="flex flex-wrap gap-2">
               <label>
                 <input
                   type="radio"
-                  name="sparkling"
+                  name="bubbles"
                   value="no"
                   checked={preferences.bubbles === "no"}
                   onChange={(e) =>
@@ -182,12 +193,12 @@ export default function CocktailFinder() {
                     })
                   }
                 />
-                <span>No Sparkling</span>
+                <span>No Bubbles</span>
               </label>
               <label>
                 <input
                   type="radio"
-                  name="sparkling"
+                  name="bubbles"
                   value="yes"
                   checked={preferences.bubbles === "yes"}
                   onChange={(e) =>
@@ -197,7 +208,7 @@ export default function CocktailFinder() {
                     })
                   }
                 />
-                <span>With Sparkling</span>
+                <span>With Bubbles</span>
               </label>
             </div>
           </div>
@@ -230,7 +241,7 @@ export default function CocktailFinder() {
           </button>
         </form>
 
-        {error && <div className="mt-2 text-red-500">{error}</div>}
+        {error && <div className="mt-2 text-red-400">{error}</div>}
 
         <div className="mt-8 flex flex-col gap-y-6">
           {suggestions.map((cocktail, index) => (

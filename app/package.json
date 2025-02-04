@@ -5,18 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --skipLibCheck && vite build",
+    "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
+    "@react-hook/resize-observer": "^2.0.2",
     "@tailwindcss/vite": "^4.0.3",
+    "@types/d3": "^7.4.3",
     "clsx": "^2.1.1",
+    "d3": "^7.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.5",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.1",
+    "vite-plugin-pwa": "^0.21.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
