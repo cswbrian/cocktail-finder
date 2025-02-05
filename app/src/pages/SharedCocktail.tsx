@@ -1,21 +1,28 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CocktailSuggestion from "../components/CocktailSuggestion";
+import LZString from "lz-string";
 
 export default function SharedCocktail() {
   const { encoded } = useParams();
   const [cocktail, setCocktail] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (encoded) {
       try {
-        const decoded = atob(encoded);
-        setCocktail(JSON.parse(decoded));
+        const decoded = LZString.decompressFromEncodedURIComponent(encoded);
+        if (decoded) {
+          setCocktail(JSON.parse(decoded));
+        } else {
+          throw new Error("Failed to decompress data");
+        }
       } catch (error) {
         console.error("Failed to decode cocktail:", error);
+        navigate("/");
       }
     }
-  }, [encoded]);
+  }, [encoded, navigate]);
 
   if (!cocktail) return <div>Loading...</div>;
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Cocktail } from "../type";
+import LZString from "lz-string";
 
 interface ShareButtonProps {
   cocktail: Cocktail;
@@ -9,8 +10,10 @@ export default function ShareButton({ cocktail }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const generateShareUrl = () => {
-    const encoded = btoa(JSON.stringify(cocktail));
-    return `${window.location.origin}/cocktails/${encoded}`;
+    const compressed = LZString.compressToEncodedURIComponent(
+      JSON.stringify(cocktail),
+    );
+    return `${window.location.origin}/cocktails/${compressed}`;
   };
 
   const handleShare = async () => {
