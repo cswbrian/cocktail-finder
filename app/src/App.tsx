@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
+import Header from "./components/Header";
 import CocktailFinder from "./components/CocktailFinder";
-import { useEffect } from "react";
+import SharedCocktail from "./pages/SharedCocktail";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -17,6 +19,7 @@ function App() {
 
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<CocktailFinder />} />
 
@@ -24,6 +27,7 @@ function App() {
           path="/twist"
           element={isAuthenticated ? <CocktailFinder /> : <Login />}
         />
+        <Route path="/cocktails/:encoded" element={<SharedCocktail />} />
 
         {/* <Route path="/login" element={<Login />} /> */}
       </Routes>

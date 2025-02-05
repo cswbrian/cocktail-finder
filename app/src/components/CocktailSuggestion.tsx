@@ -1,22 +1,10 @@
+import ShareButton from "./ShareButton";
+import { Cocktail } from "../type";
+
 interface Ingredient {
   name: string;
   amount: number;
   unit: string;
-}
-
-interface Cocktail {
-  name: string;
-  baseSpirits: Ingredient[];
-  ingredients: Ingredient[];
-  technique: string;
-  garnish: string;
-  flavor_profile: {
-    sweetness: number;
-    booziness: number;
-    balance_rating: number;
-  };
-  rationale: string;
-  source_links: string[];
 }
 
 interface CocktailSuggestionProps {
@@ -85,6 +73,8 @@ export default function CocktailSuggestion({
           ))}
         </div>
       )}
+
+      <ShareButton cocktail={cocktail} />
     </div>
   );
 }

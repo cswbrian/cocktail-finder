@@ -3,13 +3,17 @@ import { cn } from "../utils";
 import CocktailSuggestion from "./CocktailSuggestion";
 import FlavorChart from "./FlavorChart";
 import { API_URL, flavorOptions, baseSpiritOptions } from "../lib/const";
+import * as Slider from "@radix-ui/react-slider";
 
 interface Preferences {
   flavorProfile: string[];
   baseSpirits: (typeof baseSpiritOptions)[number][];
   bubbles: string;
-  sweetness: number;
   booziness: number;
+  sweetness: number;
+  sourness: number;
+  bodyWeight: number;
+  complexity: number;
 }
 
 export default function CocktailFinder() {
@@ -17,8 +21,11 @@ export default function CocktailFinder() {
     flavorProfile: [],
     baseSpirits: [],
     bubbles: "no",
-    sweetness: 0,
     booziness: 0,
+    sweetness: 0,
+    sourness: 0,
+    bodyWeight: 0,
+    complexity: 0,
   });
 
   const [suggestions, setSuggestions] = useState([]);
@@ -35,16 +42,16 @@ export default function CocktailFinder() {
     }));
   };
 
-  const handleFlavorSelect = (
-    sweetness: number | null,
-    booziness: number | null,
-  ) => {
-    setPreferences((prev) => ({
-      ...prev,
-      sweetness: sweetness || 0,
-      booziness: booziness || 0,
-    }));
-  };
+  // const handleFlavorSelect = (
+  //   sweetness: number | null,
+  //   booziness: number | null,
+  // ) => {
+  //   setPreferences((prev) => ({
+  //     ...prev,
+  //     sweetness: sweetness || 0,
+  //     booziness: booziness || 0,
+  //   }));
+  // };
 
   const parsePartialJSON = (text: string) => {
     try {
@@ -108,9 +115,9 @@ export default function CocktailFinder() {
   return (
     <div>
       <div className="relative container mx-auto p-4">
-        <h1 className="mt-8 text-4xl">AI Cocktail Finder</h1>
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-y-4">
           <div>
+            {/* Commented out FlavorChart
             <label className="font-semibold">
               Click on the chart to select your preference
             </label>
@@ -128,25 +135,124 @@ export default function CocktailFinder() {
               onSelect={handleFlavorSelect}
               showExamples={showExamples}
             />
-            <div>
-              <label className="font-semibold">Flavour Profile</label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {flavorOptions.map((flavor) => (
-                  <button
-                    className={cn(
-                      "rounded-full border px-4 py-2",
-                      preferences.flavorProfile.includes(flavor.name)
-                        ? `${flavor.bg} ${flavor.border} ${flavor.text}`
-                        : `border-white text-white`,
-                    )}
-                    type="button"
-                    key={flavor.name}
-                    onClick={() => toggleFlavor(flavor.name)}
-                  >
-                    {flavor.name}
-                  </button>
-                ))}
-              </div>
+            */}
+
+            <div className="mt-4">
+              <label className="font-semibold">
+                Booziness (Light to Strong)
+              </label>
+              <Slider.Root
+                className="relative flex h-5 w-full touch-none items-center select-none"
+                value={[preferences.booziness]}
+                onValueChange={([value]) =>
+                  setPreferences((prev) => ({ ...prev, booziness: value }))
+                }
+                max={10}
+                step={1}
+              >
+                <Slider.Track className="relative h-1 grow rounded-full bg-gray-700">
+                  <Slider.Range className="absolute h-full rounded-full bg-white" />
+                </Slider.Track>
+                <Slider.Thumb className="focus:ring-opacity-50 block h-5 w-5 rounded-full bg-white focus:ring-2 focus:ring-white focus:outline-none" />
+              </Slider.Root>
+            </div>
+
+            <div className="mt-4">
+              <label className="font-semibold">Sweetness (Dry to Sweet)</label>
+              <Slider.Root
+                className="relative flex h-5 w-full touch-none items-center select-none"
+                value={[preferences.sweetness]}
+                onValueChange={([value]) =>
+                  setPreferences((prev) => ({ ...prev, sweetness: value }))
+                }
+                max={10}
+                step={1}
+              >
+                <Slider.Track className="relative h-1 grow rounded-full bg-gray-700">
+                  <Slider.Range className="absolute h-full rounded-full bg-white" />
+                </Slider.Track>
+                <Slider.Thumb className="focus:ring-opacity-50 block h-5 w-5 rounded-full bg-white focus:ring-2 focus:ring-white focus:outline-none" />
+              </Slider.Root>
+            </div>
+
+            <div className="mt-4">
+              <label className="font-semibold">
+                Sourness (Not Sour to Very Sour)
+              </label>
+              <Slider.Root
+                className="relative flex h-5 w-full touch-none items-center select-none"
+                value={[preferences.sourness]}
+                onValueChange={([value]) =>
+                  setPreferences((prev) => ({ ...prev, sourness: value }))
+                }
+                max={10}
+                step={1}
+              >
+                <Slider.Track className="relative h-1 grow rounded-full bg-gray-700">
+                  <Slider.Range className="absolute h-full rounded-full bg-white" />
+                </Slider.Track>
+                <Slider.Thumb className="focus:ring-opacity-50 block h-5 w-5 rounded-full bg-white focus:ring-2 focus:ring-white focus:outline-none" />
+              </Slider.Root>
+            </div>
+
+            <div className="mt-4">
+              <label className="font-semibold">
+                Body/Weight (Light to Heavy)
+              </label>
+              <Slider.Root
+                className="relative flex h-5 w-full touch-none items-center select-none"
+                value={[preferences.bodyWeight]}
+                onValueChange={([value]) =>
+                  setPreferences((prev) => ({ ...prev, bodyWeight: value }))
+                }
+                max={10}
+                step={1}
+              >
+                <Slider.Track className="relative h-1 grow rounded-full bg-gray-700">
+                  <Slider.Range className="absolute h-full rounded-full bg-white" />
+                </Slider.Track>
+                <Slider.Thumb className="focus:ring-opacity-50 block h-5 w-5 rounded-full bg-white focus:ring-2 focus:ring-white focus:outline-none" />
+              </Slider.Root>
+            </div>
+
+            <div className="mt-4">
+              <label className="font-semibold">
+                Complexity (Simple to Complex)
+              </label>
+              <Slider.Root
+                className="relative flex h-5 w-full touch-none items-center select-none"
+                value={[preferences.complexity]}
+                onValueChange={([value]) =>
+                  setPreferences((prev) => ({ ...prev, complexity: value }))
+                }
+                max={10}
+                step={1}
+              >
+                <Slider.Track className="relative h-1 grow rounded-full bg-gray-700">
+                  <Slider.Range className="absolute h-full rounded-full bg-white" />
+                </Slider.Track>
+                <Slider.Thumb className="focus:ring-opacity-50 block h-5 w-5 rounded-full bg-white focus:ring-2 focus:ring-white focus:outline-none" />
+              </Slider.Root>
+            </div>
+          </div>
+          <div>
+            <label className="font-semibold">Flavour Profile</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {flavorOptions.map((flavor) => (
+                <button
+                  className={cn(
+                    "rounded-full border px-4 py-2",
+                    preferences.flavorProfile.includes(flavor.name)
+                      ? `${flavor.bg} ${flavor.border} ${flavor.text}`
+                      : `border-white text-white`,
+                  )}
+                  type="button"
+                  key={flavor.name}
+                  onClick={() => toggleFlavor(flavor.name)}
+                >
+                  {flavor.name}
+                </button>
+              ))}
             </div>
           </div>
           <div>
